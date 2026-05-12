@@ -1,0 +1,51 @@
+name: Validate Migrations
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: stock_price_repository
+        options: >-
+          --health-cmd "mysqladmin ping -uroot -proot --silent"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 3306:3306
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.18.1/migrate.linux-amd64.tar.gz | tar xz
+          sudo mv migrate /usr/local/bin/
+          sudo apt-get install -y mysql-client
+
+      - name: migrate up
+        run: migrate -path ./migrations -database "mysql://root:root@tcp(127.0.0.1:3306)/stock_price_repository" up
+
+      - name: migrate down
+        run: migrate -path ./migrations -database "mysql://root:root@tcp(127.0.0.1:3306)/stock_price_repository" down -all
+
+      - name: migrate up again
+        run: migrate -path ./migrations -database "mysql://root:root@tcp(127.0.0.1:3306)/stock_price_repository" up
+
+      - name: Verify schema drift
+        run: |
+          mysqldump -h 127.0.0.1 -P 3306 -uroot -proot \
+            --no-data --skip-comments --skip-add-drop-table \
+            stock_price_repository > /tmp/current_schema.sql
+          diff schema/schema.sql /tmp/current_schema.sql || {
+            echo "SCHEMA DRIFT: commit schema/schema.sql using scripts/dump-schema.sh"
+            exit 1
+          }

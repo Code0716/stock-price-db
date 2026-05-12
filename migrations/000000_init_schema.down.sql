@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS `stock_price_repository`.`analyze_stock_brand_price_history`;
+DROP TABLE IF EXISTS `stock_price_repository`.`high_volume_stock_brands`;
+DROP TABLE IF EXISTS `stock_price_repository`.`sector_17_average_daily_price`;
+DROP TABLE IF EXISTS `stock_price_repository`.`sector_33_average_daily_price`;
+DROP TABLE IF EXISTS `stock_price_repository`.`stock_brands_daily_price`;
+DROP TABLE IF EXISTS `stock_price_repository`.`stock_brands_daily_price_for_analyze`;
+DROP TABLE IF EXISTS `stock_price_repository`.`nikkei_stock_average_daily_price`;
+DROP TABLE IF EXISTS `stock_price_repository`.`dji_stock_average_daily_stock_price`;
+DROP TABLE IF EXISTS `stock_price_repository`.`stock_brand`;
