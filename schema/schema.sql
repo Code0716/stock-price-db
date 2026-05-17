@@ -69,6 +69,51 @@ CREATE TABLE `dji_stock_average_daily_stock_price` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fin_announcement` (
+  `id` char(36) NOT NULL,
+  `ticker_symbol` varchar(10) NOT NULL COMMENT '証券コード',
+  `stock_brand_id` char(36) DEFAULT NULL COMMENT '銘柄ID',
+  `announcement_date` date NOT NULL COMMENT '決算発表予定日',
+  `fiscal_year` varchar(10) DEFAULT NULL COMMENT '会計年度',
+  `fiscal_quarter` varchar(10) DEFAULT NULL COMMENT '会計期間',
+  `sector_17_code` varchar(10) DEFAULT NULL COMMENT '17業種コード',
+  `sector_33_code` varchar(10) DEFAULT NULL COMMENT '33業種コード',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_announcement` (`ticker_symbol`,`announcement_date`),
+  KEY `idx_announcement_date` (`announcement_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fin_statement` (
+  `id` char(36) NOT NULL,
+  `ticker_symbol` varchar(10) NOT NULL COMMENT '証券コード',
+  `stock_brand_id` char(36) DEFAULT NULL COMMENT '銘柄ID',
+  `disclosed_date` date NOT NULL COMMENT '開示日',
+  `fiscal_year_end` date DEFAULT NULL COMMENT '当期末日',
+  `type_of_document` varchar(64) DEFAULT NULL COMMENT '開示書類種別',
+  `type_of_current_period` varchar(10) DEFAULT NULL COMMENT '当会計期間の種類',
+  `net_sales` decimal(20,2) DEFAULT NULL COMMENT '売上高',
+  `operating_profit` decimal(20,2) DEFAULT NULL COMMENT '営業利益',
+  `ordinary_profit` decimal(20,2) DEFAULT NULL COMMENT '経常利益',
+  `profit` decimal(20,2) DEFAULT NULL COMMENT '当期純利益',
+  `earnings_per_share` decimal(20,4) DEFAULT NULL COMMENT 'EPS',
+  `book_value_per_share` decimal(20,4) DEFAULT NULL COMMENT 'BPS',
+  `forecast_net_sales` decimal(20,2) DEFAULT NULL COMMENT '通期予想売上高',
+  `forecast_operating_profit` decimal(20,2) DEFAULT NULL COMMENT '通期予想営業利益',
+  `forecast_profit` decimal(20,2) DEFAULT NULL COMMENT '通期予想純利益',
+  `forecast_eps` decimal(20,4) DEFAULT NULL COMMENT '通期予想EPS',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_statement` (`ticker_symbol`,`disclosed_date`,`type_of_document`),
+  KEY `idx_statement_symbol` (`ticker_symbol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `high_volume_stock_brands` (
   `stock_brand_id` char(36) NOT NULL COMMENT 'uuid',
   `ticker_symbol` varchar(5) NOT NULL COMMENT '証券コード',
