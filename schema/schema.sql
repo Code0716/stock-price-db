@@ -55,6 +55,29 @@ CREATE TABLE `applied_stock_splits_history` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `daytrade_executions` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `executed_on` date NOT NULL COMMENT '約定日',
+  `trade_kind` varchar(16) NOT NULL COMMENT '取引区分 (売建/買建/現物買付/現物売却 等)',
+  `margin_kind` varchar(16) NOT NULL DEFAULT '' COMMENT '信用区分 (返済売/返済買/新規買/新規売/空)',
+  `ticker_symbol` varchar(10) NOT NULL COMMENT '銘柄コード (4桁)',
+  `brand_name` varchar(255) NOT NULL COMMENT '銘柄名',
+  `quantity` int unsigned NOT NULL COMMENT '数量',
+  `trade_amount` bigint NOT NULL COMMENT '約定代金 (円)',
+  `unit_price` decimal(15,4) NOT NULL COMMENT '単価',
+  `average_cost` decimal(15,4) NOT NULL COMMENT '平均取得単価',
+  `profit_loss` bigint NOT NULL COMMENT '売買損益 (税引前・円)',
+  `source` varchar(16) NOT NULL DEFAULT 'sbi' COMMENT 'CSV 出力元',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_daytrade_natural` (`executed_on`,`ticker_symbol`,`trade_kind`,`margin_kind`,`quantity`,`trade_amount`,`unit_price`,`profit_loss`),
+  KEY `idx_daytrade_executed_on` (`executed_on`),
+  KEY `idx_daytrade_executed_on_symbol` (`executed_on`,`ticker_symbol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dji_stock_average_daily_stock_price` (
   `date` datetime NOT NULL COMMENT 'date',
   `open_price` decimal(10,4) NOT NULL COMMENT '始値',
