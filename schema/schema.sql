@@ -67,11 +67,12 @@ CREATE TABLE `daytrade_executions` (
   `unit_price` decimal(15,4) NOT NULL COMMENT '単価',
   `average_cost` decimal(15,4) NOT NULL COMMENT '平均取得単価',
   `profit_loss` bigint NOT NULL COMMENT '売買損益 (税引前・円)',
+  `occurrence_no` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '同一自然キー内での出現順序 (0始まり)',
   `source` varchar(16) NOT NULL DEFAULT 'sbi' COMMENT 'CSV 出力元',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_daytrade_natural` (`executed_on`,`ticker_symbol`,`trade_kind`,`margin_kind`,`quantity`,`trade_amount`,`unit_price`,`profit_loss`),
+  UNIQUE KEY `uk_daytrade_natural` (`executed_on`,`ticker_symbol`,`trade_kind`,`margin_kind`,`quantity`,`trade_amount`,`unit_price`,`profit_loss`,`occurrence_no`),
   KEY `idx_daytrade_executed_on` (`executed_on`),
   KEY `idx_daytrade_executed_on_symbol` (`executed_on`,`ticker_symbol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
