@@ -79,8 +79,6 @@ CREATE TABLE `daytrade_executions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `daytrade_trade_notes` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `ticker_symbol` varchar(10) NOT NULL COMMENT '銘柄コード',
@@ -95,6 +93,8 @@ CREATE TABLE `daytrade_trade_notes` (
   UNIQUE KEY `uk_daytrade_trade_note` (`executed_on`,`ticker_symbol`,`direction`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dji_stock_average_daily_stock_price` (
   `date` datetime NOT NULL COMMENT 'date',
   `open_price` decimal(10,4) NOT NULL COMMENT '始値',
