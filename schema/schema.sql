@@ -19,11 +19,14 @@ CREATE TABLE `analyze_stock_brand_price_history` (
   `action` varchar(10) NOT NULL COMMENT '売り/買いの別',
   `method` varchar(255) NOT NULL COMMENT '分析方法',
   `memo` text COMMENT 'メモ',
+  `score` decimal(10,4) DEFAULT NULL COMMENT '複合スコア（出す手法のみ。analyze_diamonds等）',
+  `signal_rank` int DEFAULT NULL COMMENT '手法内ランク（1始まり）',
   `created_at` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_analyze_stock_brand_price_history_stock_ticker_method_date` (`stock_brand_id`,`ticker_symbol`,`method`,`created_at`),
   KEY `ticker_symbol` (`ticker_symbol`),
   KEY `idx_analyze_stock_brand_price_history_stock_brand_id` (`stock_brand_id`),
+  KEY `idx_analyze_history_created_at_method` (`created_at`,`method`),
   CONSTRAINT `analyze_stock_brand_price_history_ibfk_1` FOREIGN KEY (`stock_brand_id`) REFERENCES `stock_brand` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
