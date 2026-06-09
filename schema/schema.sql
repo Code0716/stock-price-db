@@ -79,6 +79,22 @@ CREATE TABLE `daytrade_executions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `daytrade_trade_notes` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `ticker_symbol` varchar(10) NOT NULL COMMENT '銘柄コード',
+  `executed_on` date NOT NULL COMMENT '約定日（近似キー）',
+  `direction` varchar(16) NOT NULL COMMENT '正規化済み売買方向（近似キー）',
+  `memo` text COMMENT '自由メモ',
+  `tags` json DEFAULT NULL COMMENT 'タグ配列（例: ["高値掴み","ナンピン"]）',
+  `declared_stop_price` decimal(15,4) DEFAULT NULL COMMENT '損切りライン宣言価格（自動判定はしない・記録のみ）',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_daytrade_trade_note` (`executed_on`,`ticker_symbol`,`direction`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dji_stock_average_daily_stock_price` (
   `date` datetime NOT NULL COMMENT 'date',
   `open_price` decimal(10,4) NOT NULL COMMENT '始値',
