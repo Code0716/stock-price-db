@@ -1,0 +1,1 @@
+ALTER TABLE fin_statement DROP COLUMN forecast_dividend_per_share_annual;
