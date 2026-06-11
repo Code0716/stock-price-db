@@ -9,6 +9,9 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
+SET @@SESSION.SQL_LOG_BIN= 0;
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '0e7161ce-5f04-11f0-b74b-f27fd8029f44:1-116535';
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `analyze_stock_brand_price_history` (
@@ -25,7 +28,7 @@ CREATE TABLE `analyze_stock_brand_price_history` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_analyze_stock_brand_price_history_stock_ticker_method_date` (`stock_brand_id`,`ticker_symbol`,`method`,`created_at`),
   KEY `ticker_symbol` (`ticker_symbol`),
-  KEY `idx_analyze_stock_brand_price_history_stock_brand_id` (`stock_brand_id`),
+  KEY `analyze_stock_brand_price_history_ibfk_1` (`stock_brand_id`),
   KEY `idx_analyze_history_created_at_method` (`created_at`,`method`),
   CONSTRAINT `analyze_stock_brand_price_history_ibfk_1` FOREIGN KEY (`stock_brand_id`) REFERENCES `stock_brand` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -54,7 +57,7 @@ CREATE TABLE `applied_stock_splits_history` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_symbol_split_date` (`symbol`,`split_date`),
   KEY `idx_applied_stock_splits_history_symbol_split_date` (`symbol`,`split_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=153 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -78,7 +81,7 @@ CREATE TABLE `daytrade_executions` (
   UNIQUE KEY `uk_daytrade_natural` (`executed_on`,`ticker_symbol`,`trade_kind`,`margin_kind`,`quantity`,`trade_amount`,`unit_price`,`profit_loss`,`occurrence_no`),
   KEY `idx_daytrade_executed_on` (`executed_on`),
   KEY `idx_daytrade_executed_on_symbol` (`executed_on`,`ticker_symbol`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13496 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -148,6 +151,7 @@ CREATE TABLE `fin_statement` (
   `forecast_operating_profit` decimal(20,2) DEFAULT NULL COMMENT '通期予想営業利益',
   `forecast_profit` decimal(20,2) DEFAULT NULL COMMENT '通期予想純利益',
   `forecast_eps` decimal(20,4) DEFAULT NULL COMMENT '通期予想EPS',
+  `forecast_dividend_per_share_annual` decimal(20,4) DEFAULT NULL COMMENT '1株あたり当期予想配当（年間合計）',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -186,7 +190,7 @@ CREATE TABLE `schema_migrations` (
   `version` bigint NOT NULL,
   `dirty` tinyint(1) NOT NULL,
   PRIMARY KEY (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -260,10 +264,10 @@ CREATE TABLE `stock_brands_daily_price` (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'updated_at',
   `deleted_at` datetime DEFAULT NULL COMMENT 'deleted_at',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_stock_brands_daily_stock_price_stock_brand_id_and_date` (`stock_brand_id`,`date`),
+  UNIQUE KEY `unique_stock_brands_daily_stock_price_ticker_symbol_and_date` (`stock_brand_id`,`date`),
   KEY `idx_stock_brands_daily_stock_price_ticker_symbol` (`ticker_symbol`),
   KEY `idx_stock_brands_daily_stock_price_date` (`date`),
-  KEY `idx_stock_brands_daily_stock_price_stock_brand_id_and_date` (`stock_brand_id`,`date`),
+  KEY `idx_stock_brands_daily_stock_price_ticker_symbol_and_date` (`stock_brand_id`,`date`),
   CONSTRAINT `stock_brands_daily_price_ibfk_1` FOREIGN KEY (`stock_brand_id`) REFERENCES `stock_brand` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -288,6 +292,7 @@ CREATE TABLE `stock_brands_daily_price_for_analyze` (
   KEY `idx_stock_brands_daily_price_ticker_symbol_and_date` (`ticker_symbol`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
