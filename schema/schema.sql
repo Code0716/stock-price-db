@@ -183,6 +183,45 @@ CREATE TABLE `nikkei_stock_average_daily_price` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `quiz_answer` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `quiz_date` date NOT NULL COMMENT 'クイズ対象日',
+  `stock_brand_id` char(36) NOT NULL COMMENT 'stock_brand.id',
+  `ticker_symbol` varchar(10) NOT NULL COMMENT '銘柄コード',
+  `prediction` varchar(16) NOT NULL COMMENT '回答: strong_down/down/up/strong_up',
+  `answered_at` datetime NOT NULL COMMENT '回答日時',
+  `next_close_price` decimal(10,4) DEFAULT NULL COMMENT '翌営業日終値（採点時に確定）',
+  `actual_return` decimal(12,6) DEFAULT NULL COMMENT '(翌営業日終値-基準終値)/基準終値',
+  `outcome` varchar(16) DEFAULT NULL COMMENT '採点結果: correct/incorrect/draw/void',
+  `score` tinyint DEFAULT NULL COMMENT '獲得スコア +2/+1/0/-1/-2',
+  `graded_at` datetime DEFAULT NULL COMMENT '採点日時',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created_at',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'updated_at',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_quiz_answer_date_brand` (`quiz_date`,`stock_brand_id`),
+  KEY `idx_quiz_answer_quiz_date` (`quiz_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `quiz_daily_universe` (
+  `quiz_date` date NOT NULL COMMENT 'クイズ対象日（この日の終値までチャート表示、翌営業日終値を予想）',
+  `stock_brand_id` char(36) NOT NULL COMMENT 'stock_brand.id',
+  `ticker_symbol` varchar(10) NOT NULL COMMENT '銘柄コード',
+  `question_order` int unsigned NOT NULL COMMENT '出題順 1..300',
+  `avg_trading_value` decimal(24,4) NOT NULL COMMENT '直近20営業日平均売買代金 volume*close',
+  `avg_daily_range` decimal(12,6) NOT NULL COMMENT '直近20営業日平均値幅率 (high-low)/close',
+  `base_close_price` decimal(10,4) NOT NULL COMMENT 'quiz_date終値（採点基準のスナップショット）',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created_at',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'updated_at',
+  PRIMARY KEY (`quiz_date`,`stock_brand_id`),
+  UNIQUE KEY `uk_quiz_daily_universe_date_order` (`quiz_date`,`question_order`),
+  KEY `idx_quiz_daily_universe_stock_brand_id` (`stock_brand_id`),
+  CONSTRAINT `quiz_daily_universe_ibfk_1` FOREIGN KEY (`stock_brand_id`) REFERENCES `stock_brand` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `schema_migrations` (
   `version` bigint NOT NULL,
   `dirty` tinyint(1) NOT NULL,
