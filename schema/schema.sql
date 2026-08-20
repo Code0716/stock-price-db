@@ -219,6 +219,22 @@ CREATE TABLE `nikkei_stock_average_daily_price` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notification_history` (
+  `id` char(36) NOT NULL COMMENT 'UUID',
+  `source` varchar(16) NOT NULL COMMENT '送信元サービス: spr/stt',
+  `channel_id` varchar(64) NOT NULL COMMENT 'Slack チャンネル ID または #名前（既存 SlackChannelName 定数の値そのまま）',
+  `channel_label` varchar(64) NOT NULL COMMENT 'チャンネル表示名。front が名前解決せず表示するため送信時に確定させて保存',
+  `title` text NOT NULL COMMENT '通知タイトル（親メッセージ本文）',
+  `body` mediumtext COMMENT 'スレッド本文。SendMessage 系（固定文言のみ）は NULL',
+  `sent_at` datetime NOT NULL COMMENT 'Slack 送信日時',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created_at',
+  PRIMARY KEY (`id`),
+  KEY `idx_notification_history_sent_at` (`sent_at`),
+  KEY `idx_notification_history_channel_sent_at` (`channel_id`,`sent_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `quiz_answer` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `quiz_date` date NOT NULL COMMENT 'クイズ対象日',
