@@ -58,6 +58,32 @@ CREATE TABLE `applied_stock_splits_history` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `daily_avoid_stock` (
+  `as_of_date` date NOT NULL COMMENT '判定基準日（この日の引け値までの直近12ヶ月の日次リターンで算出）',
+  `stock_brand_id` char(36) NOT NULL COMMENT 'stock_brand.id',
+  `ticker_symbol` varchar(10) NOT NULL COMMENT '銘柄コード',
+  `avoid_rank` int unsigned NOT NULL COMMENT 'ボラ降順の順位 1..N（rank は MySQL8 予約語のため avoid_rank）',
+  `severity` varchar(16) NOT NULL COMMENT '重大度: high(上位10%以内) / elevated(上位10-20%)',
+  `reason` varchar(32) NOT NULL COMMENT '判定理由。現状は high_volatility 固定。将来の判定軸追加に備えた識別子',
+  `rule_version` varchar(16) NOT NULL COMMENT '判定ルール定義バージョン。閾値変更時にインクリメントし過去分と混ぜて集計しない',
+  `volatility_12m` decimal(10,6) NOT NULL COMMENT '直近252営業日の日次リターン標準偏差を年率換算した値（0.62=62%）',
+  `volatility_percentile` decimal(6,4) NOT NULL COMMENT 'ユニバース内の上位比率 0.0000-1.0000（0.0500=上位5%）',
+  `universe_size` int unsigned NOT NULL COMMENT '判定対象の流動性ユニバース銘柄数（パーセンタイルの分母。同一as_of_dateの全行で同値）',
+  `threshold_volatility` decimal(10,6) NOT NULL COMMENT '当日の上位20%ラインの年率ボラ（同一as_of_dateの全行で同値）',
+  `avg_trading_value` decimal(24,4) NOT NULL COMMENT '直近20営業日平均売買代金 volume*close（ユニバース判定に使った値）',
+  `base_close_price` decimal(10,4) NOT NULL COMMENT 'as_of_date の終値（目視確認用スナップショット）',
+  `sector_33_code_name` varchar(64) DEFAULT NULL COMMENT '33業種名。高ボラ群の業種偏りを後から検証するため保存',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created_at',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated_at',
+  PRIMARY KEY (`as_of_date`,`stock_brand_id`),
+  UNIQUE KEY `uk_daily_avoid_stock_date_rank` (`as_of_date`,`avoid_rank`),
+  KEY `idx_daily_avoid_stock_brand_date` (`stock_brand_id`,`as_of_date`),
+  KEY `idx_daily_avoid_stock_ticker_date` (`ticker_symbol`,`as_of_date`),
+  CONSTRAINT `daily_avoid_stock_ibfk_1` FOREIGN KEY (`stock_brand_id`) REFERENCES `stock_brand` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `daily_stock_pick` (
   `pick_date` date NOT NULL COMMENT '選定基準日（この日の引け値でスクリーニング。翌営業日の寄り〜引けで買う想定）',
   `stock_brand_id` char(36) NOT NULL COMMENT 'stock_brand.id',
