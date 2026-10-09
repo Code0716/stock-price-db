@@ -231,6 +231,31 @@ CREATE TABLE `high_volume_stock_brands` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `market_calendar` (
+  `calendar_date` date NOT NULL COMMENT '日付',
+  `hol_div` tinyint NOT NULL COMMENT '休日区分（J-Quants HolDiv）: 0=休場 / 1=営業 / 2=半日取引 / 3=休場だが祝日取引あり',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created_at',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated_at',
+  PRIMARY KEY (`calendar_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `market_event` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `event_date` date NOT NULL COMMENT 'カレンダー上に表示する日付（FOMCは結果発表の日本時間の日付）',
+  `kind` varchar(32) NOT NULL COMMENT 'イベント種別: sq_major / sq_mini / boj / fomc / us_cpi / us_nfp',
+  `label` varchar(64) NOT NULL COMMENT '表示ラベル',
+  `source` varchar(32) NOT NULL COMMENT '取得元: jquants_calc / boj_html / fed_html / bls_ics / manual',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created_at',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updated_at',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_market_event_date_kind` (`event_date`,`kind`),
+  KEY `idx_market_event_date` (`event_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `nikkei_stock_average_daily_price` (
   `date` datetime NOT NULL COMMENT 'date',
   `open_price` decimal(10,4) NOT NULL COMMENT '始値',
